@@ -2,82 +2,62 @@ import SwiftUI
 import MetalKit
 
 #if os(iOS)
-public struct MetalView<Content>: UIViewRepresentable where Content: MetalPresenting {
-    public var wrappedView: Content
-    
+public struct MetalView<Content: MetalPresenting>: UIViewRepresentable {
+    private let content: () -> Content
     private var handleUpdateUIView: ((Content, Context) -> Void)?
     private var handleMakeUIView: ((Context) -> Content)?
-    
-    public init(closure: () -> Content) {
-        wrappedView = closure()
+
+    public init(content: @escaping () -> Content) {
+        self.content = content
     }
-    
+
     public func makeUIView(context: Context) -> Content {
-        guard let handler = handleMakeUIView else {
-            return wrappedView
-        }
-        
-        return handler(context)
+        handleMakeUIView?(context) ?? content()
     }
-    
+
     public func updateUIView(_ uiView: Content, context: Context) {
         handleUpdateUIView?(uiView, context)
     }
 }
 
-public extension MetalView {
-    mutating func setMakeUIView(handler: @escaping (Context) -> Content) -> Self {
+extension MetalView {
+    public mutating func setMakeUIView(handler: @escaping (Context) -> Content) -> Self {
         handleMakeUIView = handler
-        
         return self
     }
-    
-    mutating func setUpdateUIView(handler: @escaping (Content, Context) -> Void) -> Self {
+
+    public mutating func setUpdateUIView(handler: @escaping (Content, Context) -> Void) -> Self {
         handleUpdateUIView = handler
-        
         return self
     }
 }
 #elseif os(macOS)
-public struct MetalView<Content>: NSViewRepresentable where Content: MetalPresenting {
-    public typealias NSViewType = Content
-    
-    public var wrappedView: Content
-    
+public struct MetalView<Content: MetalPresenting>: NSViewRepresentable {
+    private var content: () -> Content
     private var handleUpdateNSView: ((Content, Context) -> Void)?
     private var handleMakeNSView: ((Context) -> Content)?
-    
-    public init(closure: () -> Content) {
-        wrappedView = closure()
+
+    public init(content: @escaping () -> Content) {
+        self.content = content
     }
-    
+
     public func makeNSView(context: Context) -> Content {
-        guard let handler = handleMakeNSView else {
-            return wrappedView
-        }
-        
-        return handler(context)
+        handleMakeNSView?(context) ?? content()
     }
-    
+
     public func updateNSView(_ nsView: Content, context: Context) {
         handleUpdateNSView?(nsView, context)
     }
 }
-
-public extension MetalView {
-    mutating func setMakeNSView(handler: @escaping (Context) -> Content) -> Self {
+extension MetalView {
+    public mutating func setMakeNSView(handler: @escaping (Context) -> Content) -> Self {
         handleMakeNSView = handler
-        
         return self
     }
-    
-    mutating func setUpdateNSView(handler: @escaping (Content, Context) -> Void) -> Self {
+
+    public mutating func setUpdateNSView(handler: @escaping (Content, Context) -> Void) -> Self {
         handleUpdateNSView = handler
-        
         return self
     }
 }
-
 #endif
-
-
