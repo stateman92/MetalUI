@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "metalui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stateman92/MetalUI",
+      "state" : {
+        "revision" : "67cb9f07059a835d7623ebc2b6151b5fdfb6eedc",
+        "version" : "0.1.4"
+      }
+    }
+  ],
+  "version" : 2
+}
