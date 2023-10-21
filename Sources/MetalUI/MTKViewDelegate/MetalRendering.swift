@@ -20,9 +20,9 @@ public protocol MetalRendering: NSObject, MTKViewDelegate {
 extension MetalRendering {
     public init(vertices: [MetalRenderingVertex], device: MTLDevice) {
         self.init()
-        
+
         self.vertices = vertices
-        
+
         createCommandQueue(device: device)
         try? createPipelineState(withLibrary: device.makeDefaultLibrary(), forDevice: device)
         createBuffers(device: device)
